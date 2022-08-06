@@ -20,6 +20,14 @@ boost::ut::suite bitsave_test = [](){
         test.save();
         expect(that % 0x0000'0003 == val);
         expect(that % 0x0000'0003 == test);
+
+        expect(that % 0x0000'0003 == test);
+        val = 1;
+        test.update();
+        expect(that % 0x0000'0001 == test);
+        val = 2;
+        expect(that % 0x0000'0002 == val);
+        expect(that % 0x0000'0001 == test);
     };
 
     "bitmanip::save() (2)"_test = [](){

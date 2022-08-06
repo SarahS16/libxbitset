@@ -31,7 +31,11 @@ add_executable(${TEST_NAME}
   tests/bittest.test.cpp
   tests/classbitset.test.cpp
   tests/bitupdate.test.cpp
-  tests/bitsave.test.cpp)
+  tests/bitsave.test.cpp
+  tests/bitmanip.test.cpp
+  tests/originmask.test.cpp
+  tests/bitmask.test.cpp
+  tests/bitrange.test.cpp)
 enable_testing()
 add_test(NAME ${TEST_NAME} WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
   COMMAND ${TEST_NAME})
