@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.1...3.21)
+cmake_minimum_required(VERSION 3.15)
 
 set(CMAKE_C_COMPILER "gcc-11")
 set(CMAKE_CXX_COMPILER "g++-11")
@@ -21,7 +21,7 @@ find_package(libxbitset)
 set(TEST_NAME unit_test)
 set(CMAKE_BUILD_TYPE Debug)
 
-add_executable(${TEST_NAME} 
+add_executable(${TEST_NAME}
   tests/main.test.cpp
   tests/bitset.test.cpp
   tests/bitreset.test.cpp
