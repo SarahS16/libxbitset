@@ -80,14 +80,14 @@ class bitset : public std::bitset<sizeof(T) * 8>
 {
 public:
   static constexpr size_t bit_width = sizeof(T) * 8;
-  bitset(T initial_value)
-    : std::bitset<bit_width>(initial_value)
+  bitset(T p_initial_value)
+    : std::bitset<bit_width>(p_initial_value)
   {
   }
 
-  auto& set(std::size_t pos, bool value = true)
+  auto& set(std::size_t p_pos, bool p_value = true)
   {
-    static_cast<std::bitset<bit_width>*>(this)->set(pos, value);
+    static_cast<std::bitset<bit_width>*>(this)->set(p_pos, p_value);
     return *this;
   }
 
@@ -97,9 +97,9 @@ public:
     return *this;
   }
 
-  auto& reset(std::size_t pos)
+  auto& reset(std::size_t p_pos)
   {
-    static_cast<std::bitset<bit_width>*>(this)->reset(pos);
+    static_cast<std::bitset<bit_width>*>(this)->reset(p_pos);
     return *this;
   }
 
@@ -109,9 +109,9 @@ public:
     return *this;
   }
 
-  auto& flip(std::size_t pos)
+  auto& flip(std::size_t p_pos)
   {
-    static_cast<std::bitset<bit_width>*>(this)->flip(pos);
+    static_cast<std::bitset<bit_width>*>(this)->flip(p_pos);
     return *this;
   }
 
@@ -121,9 +121,9 @@ public:
     return *this;
   }
 
-  auto test(std::size_t pos) const
+  auto test(std::size_t p_pos) const
   {
-    return static_cast<const std::bitset<bit_width>*>(this)->test(pos);
+    return static_cast<const std::bitset<bit_width>*>(this)->test(p_pos);
   }
 
   auto test(xstd::bitrange p_range) const
@@ -132,7 +132,7 @@ public:
   }
 
   template<bitrange field, typename U>
-  constexpr auto& insert(U value)
+  constexpr auto& insert(U p_value)
   {
     using NormalT = std::remove_volatile_t<T>;
     auto kBitmask = field.mask<std::remove_volatile_t<T>>();
@@ -144,7 +144,7 @@ public:
 
     // AND value with mask to remove any bits beyond the specified width.
     // Shift masked value into bit position and OR with target value.
-    *this |= (static_cast<NormalT>(value) << field.position) & kBitmask;
+    *this |= (static_cast<NormalT>(p_value) << field.position) & kBitmask;
 
     return *this;
   }
@@ -171,9 +171,9 @@ template<typename T>
 class bitmanip : public xstd::bitset<T>
 {
 public:
-  bitmanip(T& register_reference)
-    : xstd::bitset<T>(register_reference)
-    , register_reference_(register_reference)
+  bitmanip(T& p_register_reference)
+    : xstd::bitset<T>(p_register_reference)
+    , register_reference_(p_register_reference)
   {
   }
 
