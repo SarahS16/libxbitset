@@ -81,7 +81,8 @@ public:
   static constexpr size_t bit_width = sizeof(T) * 8;
   bitset(T initial_value)
     : std::bitset<bit_width>(initial_value)
-  {}
+  {
+  }
 
   auto& set(std::size_t pos, bool value = true)
   {
@@ -154,6 +155,12 @@ public:
     // from bit position 0 is equal to the width parameter.
     return std::bitset<mask.width>(this->to_ullong() >> mask.position);
   }
+
+  template<std::integral T>
+  [[nodiscard]] constexpr auto to()
+  {
+    return static_cast<T>(this->to_ullong());
+  }
 };
 
 template<typename T>
@@ -163,7 +170,8 @@ public:
   bitmanip(T& register_reference)
     : xstd::bitset<T>(register_reference)
     , register_reference_(register_reference)
-  {}
+  {
+  }
 
   auto& save()
   {
