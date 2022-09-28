@@ -154,7 +154,7 @@ public:
   {
     // Create mask by shifting the set of 1s down so that the number of 1s
     // from bit position 0 is equal to the width parameter.
-    return std::bitset<mask.width>(this->to_ullong() >> mask.position);
+    return xstd::bitset<mask.width>(this->to_ullong() >> mask.position);
   }
 
   template<std::integral U>
