@@ -66,6 +66,13 @@ boost::ut::suite classbitset_test = []() {
     expect(that % 0xABCD == test.extract<bitr_obj>());
   };
 
+  "class bitset::to<>"_test = []() {
+    xstd::bitset test(0x0001'FFAA);
+    expect(that % 0x0001'FFAA == test.to<std::uint32_t>());
+    expect(that % 0xFFAA == test.to<std::uint16_t>());
+    expect(that % 0xAA == test.to<std::uint8_t>());
+  };
+
   "class bitset out of bounds"_test = []() {
     // xstd::bitset test(0xFFFF'FFFF);
     // constexpr xstd::bitrange bitr_obj{24,39};
