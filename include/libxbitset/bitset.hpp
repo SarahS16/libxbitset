@@ -1,6 +1,7 @@
 #pragma once
 
 #include <bitset>
+#include <concepts>
 #include <cstdint>
 #include <limits>
 #include <type_traits>
@@ -156,10 +157,10 @@ public:
     return std::bitset<mask.width>(this->to_ullong() >> mask.position);
   }
 
-  template<std::integral T>
+  template<std::integral U>
   [[nodiscard]] constexpr auto to()
   {
-    return static_cast<T>(this->to_ullong());
+    return static_cast<U>(this->to_ullong());
   }
 };
 

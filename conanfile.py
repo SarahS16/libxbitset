@@ -1,31 +1,79 @@
 from conans import ConanFile, CMake, tools
+from conan import ConanFile
+from conan.tools.files import copy
+from conan.tools.layout import basic_layout
+from conan.tools.build import check_min_cppstd
+from conan.errors import ConanInvalidConfiguration
+import os
 
 
-class libxbitset_conan(ConanFile):
+required_conan_version = ">=1.50.0"
+
+
+class LibXBitsetConan(ConanFile):
     name = "libxbitset"
-    version = "0.1.0"
-    license = "Apache License Version 2.0"
-    author = "Khalil Estell"
-    url = "https://github.com/libhal/libxbitset"
-    description = "A collection of interfaces and abstractions for embedded peripherals and devices using modern C++"
-    topics = ("peripherals", "hardware")
-    settings = "os", "compiler", "arch", "build_type"
-    generators = "cmake_find_package"
-    exports_sources = "include/*", "CMakeLists.txt", "tests/*"
+    version = "0.2.0"
+    license = "Apache-2.0"
+    url = "https://github.com/conan-io/conan-center-index"
+    homepage = "https://github.com/libhal/libxbitset"
+    description = ("C++20 extension of std::bitset that includes multi-bit "
+                   "insertion and extraction and more")
+    topics = ("embedded", "bit", "manipulation")
+    settings = "compiler"
+    exports_sources = "include/*"
     no_copy_source = True
 
-    def build(self):
-        cmake = CMake(self)
-        cmake.configure()
-        cmake.build()
-        if self.should_test:
-            self.run("ctest -j %s --output-on-failure" % tools.cpu_count())
+    def package_id(self):
+        self.info.clear()
+
+    @property
+    def _min_cppstd(self):
+        return "20"
+
+    @property
+    def _compilers_minimum_version(self):
+        return {
+            "gcc": "11",
+            "Visual Studio": "17",
+            "msvc": "193",
+            "clang": "13",
+            "apple-clang": "13.1.6"
+        }
+
+    def requirements(self):
+        pass
+
+    def validate(self):
+        if self.settings.get_safe("compiler.cppstd"):
+            check_min_cppstd(self, self._min_cppstd)
+
+        def lazy_lt_semver(v1, v2):
+            lv1 = [int(v) for v in v1.split(".")]
+            lv2 = [int(v) for v in v2.split(".")]
+            min_length = min(len(lv1), len(lv2))
+            return lv1[:min_length] < lv2[:min_length]
+
+        compiler = str(self.settings.compiler)
+        version = str(self.settings.compiler.version)
+        minimum_version = self._compilers_minimum_version.get(compiler, False)
+
+        if minimum_version and lazy_lt_semver(version, minimum_version):
+            raise ConanInvalidConfiguration(
+                f"{self.name} {self.version} requires C++{self._min_cppstd}, which your compiler ({compiler}-{version}) does not support")
+
+    def layout(self):
+        basic_layout(self)
 
     def package(self):
-        self.copy("*.hpp")
+        copy(self, "LICENSE", dst=os.path.join(
+            self.package_folder, "licenses"),  src=self.source_folder)
+        copy(self, "*.h", dst=os.path.join(self.package_folder, "include"),
+             src=os.path.join(self.source_folder, "include"))
+        copy(self, "*.hpp", dst=os.path.join(self.package_folder,
+             "include"), src=os.path.join(self.source_folder, "include"))
 
-    def package_id(self):
-        self.info.header_only()
-
-    def build_requirements(self):
-        self.test_requires("boost-ext-ut/1.1.8@")
+    def package_info(self):
+        self.cpp_info.bindirs = []
+        self.cpp_info.frameworkdirs = []
+        self.cpp_info.libdirs = []
+        self.cpp_info.resdirs = []
