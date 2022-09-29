@@ -152,9 +152,12 @@ public:
   template<bitrange mask>
   [[nodiscard]] constexpr auto extract() const
   {
+    const auto shifted = this->to_ullong() >> mask.position;
+    const auto masked = shifted & mask.origin_mask<T>();
+    const auto final_result = static_cast<T>(masked);
     // Create mask by shifting the set of 1s down so that the number of 1s
     // from bit position 0 is equal to the width parameter.
-    return xstd::bitset<mask.width>(this->to_ullong() >> mask.position);
+    return xstd::bitset<T>(final_result);
   }
 
   template<std::integral U>
