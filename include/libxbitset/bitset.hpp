@@ -191,9 +191,12 @@ public:
     return *this;
   }
 
-  ~bitmanip() { save(); }
+  ~bitmanip()
+  {
+    save();
+  }
 
 private:
   T& register_reference_;
 };
-} // namespace xstd
+}  // namespace xstd
