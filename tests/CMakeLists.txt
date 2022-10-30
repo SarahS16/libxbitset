@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.15)
 
-set(CMAKE_C_COMPILER "gcc-12")
-set(CMAKE_CXX_COMPILER "g++-12")
+set(CMAKE_C_COMPILER "gcc-11")
+set(CMAKE_CXX_COMPILER "g++-11")
 
 project(unit_test VERSION 0.0.1 LANGUAGES CXX)
 
