@@ -12,7 +12,7 @@ required_conan_version = ">=1.50.0"
 
 class LibXBitsetConan(ConanFile):
     name = "libxbitset"
-    version = "0.2.2"
+    version = "0.2.3"
     license = "Apache-2.0"
     url = "https://github.com/conan-io/conan-center-index"
     homepage = "https://github.com/libhal/libxbitset"

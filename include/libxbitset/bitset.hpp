@@ -81,13 +81,15 @@ class bitset : public std::bitset<sizeof(T) * 8>
 public:
   static constexpr size_t bit_width = sizeof(T) * 8;
   bitset(T p_initial_value)
-    : std::bitset<bit_width>(p_initial_value)
+    : std::bitset<bit_width>(
+        static_cast<std::make_unsigned_t<T>>(p_initial_value))
   {
   }
 
-  auto& set(std::size_t p_pos, bool p_value = true)
+  auto& set(std::unsigned_integral auto p_pos, bool p_value = true)
   {
-    static_cast<std::bitset<bit_width>*>(this)->set(p_pos, p_value);
+    static_cast<std::bitset<bit_width>*>(this)->set(static_cast<size_t>(p_pos),
+                                                    p_value);
     return *this;
   }
 
@@ -97,9 +99,10 @@ public:
     return *this;
   }
 
-  auto& reset(std::size_t p_pos)
+  auto& reset(std::unsigned_integral auto p_pos)
   {
-    static_cast<std::bitset<bit_width>*>(this)->reset(p_pos);
+    static_cast<std::bitset<bit_width>*>(this)->reset(
+      static_cast<size_t>(p_pos));
     return *this;
   }
 
@@ -109,9 +112,10 @@ public:
     return *this;
   }
 
-  auto& flip(std::size_t p_pos)
+  auto& flip(std::unsigned_integral auto p_pos)
   {
-    static_cast<std::bitset<bit_width>*>(this)->flip(p_pos);
+    static_cast<std::bitset<bit_width>*>(this)->flip(
+      static_cast<size_t>(p_pos));
     return *this;
   }
 
@@ -121,9 +125,10 @@ public:
     return *this;
   }
 
-  auto test(std::size_t p_pos) const
+  auto test(std::unsigned_integral auto p_pos) const
   {
-    return static_cast<const std::bitset<bit_width>*>(this)->test(p_pos);
+    return static_cast<const std::bitset<bit_width>*>(this)->test(
+      static_cast<size_t>(p_pos));
   }
 
   auto test(xstd::bitrange p_range) const
@@ -131,10 +136,10 @@ public:
     return this->test(p_range.position);
   }
 
-  template<bitrange field, typename U>
-  constexpr auto& insert(U p_value)
+  template<bitrange field>
+  constexpr auto& insert(std::unsigned_integral auto p_value)
   {
-    using NormalT = std::remove_volatile_t<T>;
+    using NonVT = std::remove_volatile_t<T>;
     auto kBitmask = field.mask<std::remove_volatile_t<T>>();
     auto kInvertedBitmask = field.inverted_mask<std::remove_volatile_t<T>>();
 
@@ -144,7 +149,10 @@ public:
 
     // AND value with mask to remove any bits beyond the specified width.
     // Shift masked value into bit position and OR with target value.
-    *this |= (static_cast<NormalT>(p_value) << field.position) & kBitmask;
+    auto shifted_field = static_cast<NonVT>(p_value) << field.position;
+    auto value = shifted_field & static_cast<NonVT>(kBitmask);
+
+    *this |= static_cast<std::make_unsigned_t<NonVT>>(value);
 
     return *this;
   }
@@ -168,11 +176,11 @@ public:
 };
 
 template<typename T>
-class bitmanip : public xstd::bitset<T>
+class bitmanip : public xstd::bitset<std::remove_volatile_t<T>>
 {
 public:
   bitmanip(T& p_register_reference)
-    : xstd::bitset<T>(p_register_reference)
+    : xstd::bitset<std::remove_volatile_t<T>>(p_register_reference)
     , register_reference_(p_register_reference)
   {
   }
@@ -187,7 +195,8 @@ public:
 
   auto& update()
   {
-    *static_cast<xstd::bitset<T>*>(this) = register_reference_;
+    *static_cast<xstd::bitset<std::remove_volatile_t<T>>*>(this) =
+      register_reference_;
     return *this;
   }
 
